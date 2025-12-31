@@ -25,7 +25,8 @@ export default function WelcomeCard() {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.replace("/(tabs)")}
+         onPress={() => router.push("/signup")}
+
       >
         <Text style={styles.buttonText}>Get Started</Text>
       </TouchableOpacity>
