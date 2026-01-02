@@ -76,9 +76,9 @@ export default function HomeScreen() {
 
         {/* Quick Actions */}
         <View style={styles.grid}>
-          <SmallBox title="My Notes" icon="document-outline" color="#F59E0B" />
-          <SmallBox title="Symptom Tracker" icon="pulse-outline" color="#EF4444" />
-          <SmallBox title="Find Doctor" icon="location-outline" color="#3B82F6" />
+          <SmallBox title="My Notes" icon="document-outline" color="#F59E0B" onPress={() => router.push("/AppointmentNotesScreen")} />
+          <SmallBox title="Symptom Tracker" icon="pulse-outline" color="#EF4444" onPress={() => {}} />
+          <SmallBox title="Find Doctor" icon="location-outline" color="#3B82F6" onPress={() => {}} />
           <SmallBox
   title="Family History"
   icon="people-outline"
@@ -86,8 +86,8 @@ export default function HomeScreen() {
   onPress={() => router.push("/familyHealthHistory")}
 />
 
-          <SmallBox title="Appointment Prep" icon="calendar-outline" color="#10B981" />
-          <SmallBox title="Exam Records" icon="folder-outline" color="#6366F1" />
+          <SmallBox title="Appointment Prep" icon="calendar-outline" color="#10B981" onPress={() => router.push("/AppointmentPrepScreen")} />
+          <SmallBox title="Exam Records" icon="folder-outline" color="#6366F1" onPress={() => {}} />
         </View>
 
         {/* Recent Exams */}
@@ -115,27 +115,23 @@ export default function HomeScreen() {
           <LogSymptomsMain onClose={() => setShowLogSymptoms(false)} />
         </View>
       </Modal>
+
+      {/* Book Appointment Tab */}
+      <Modal
+        visible={showBook}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowBook(false)}
+      >
+        <View style={styles.modalWrapper}>
+          <BookAppointmentMain onClose={() => setShowBook(false)} />
+        </View>
+      </Modal>
     </ScreenSkeleton>
   );
 }
-const [showBook, setShowBook] = useState(false);
 
-<Modal
-  visible={showBook}
-  animationType="slide"
-  transparent
-  onRequestClose={() => setShowBook(false)}
->
-  <View
-    style={{
-      flex: 1,
-      justifyContent: "flex-end",
-      backgroundColor: "rgba(0,0,0,0.3)",
-    }}
-  >
-    <BookAppointmentMain onClose={() => setShowBook(false)} />
-  </View>
-</Modal>
+const [showBook, setShowBook] = useState(false);
 
 
 const styles = StyleSheet.create({
