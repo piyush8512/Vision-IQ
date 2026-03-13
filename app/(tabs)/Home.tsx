@@ -91,7 +91,7 @@ export default function HomeScreen() {
 />
 
           <SmallBox title="Appointment Prep" icon="calendar-outline" color="#10B981" onPress={() => router.push("/AppointmentPrepScreen")}/>
-          <SmallBox title="Exam Records" icon="folder-outline" color="#6366F1" onPress={()=> console.log('not implemented')}/>
+          <SmallBox title="Exam Records" icon="folder-outline" color="#6366F1" onPress={()=> router.push("/Exams")}/>
         </View>
 
         {/* Recent Exams */}
