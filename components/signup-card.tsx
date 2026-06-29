@@ -1,14 +1,55 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { signUp } from "@/api/auth";
 
 export default function SignupCard() {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+
+
+  async function handleSignUp() {
+  if (!acceptedTerms) {
+    alert("Please accept the Terms of Service.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    await signUp({
+      fullName,
+      email,
+      password,
+    });
+
+    alert("Account created successfully!");
+
+    router.push("/verify-email");
+  } catch (error) {
+    if (error instanceof Error) {
+      alert(error.message);
+    } else {
+      alert("Something went wrong.");
+    }
+  } finally {
+    setLoading(false);
+  }
+}
+
+
+  
   return (
     <View style={styles.card}>
       {/* Header */}
@@ -28,15 +69,15 @@ export default function SignupCard() {
 
       {/* Title */}
       <Text style={styles.title}>Create Your Account</Text>
-      <Text style={styles.subtitle}>
-        It takes less than a minute.
-      </Text>
+      <Text style={styles.subtitle}>It takes less than a minute.</Text>
 
       {/* Full Name */}
       <Text style={styles.label}>Full Name</Text>
       <TextInput
         placeholder="Jane Doe"
         style={styles.input}
+        value={fullName}
+        onChangeText={setFullName}
       />
 
       {/* Email / Phone */}
@@ -45,6 +86,9 @@ export default function SignupCard() {
         placeholder="jane@example.com"
         style={styles.input}
         keyboardType="email-address"
+        autoCapitalize="none"
+        value={email}
+        onChangeText={setEmail}
       />
 
       {/* Password */}
@@ -53,22 +97,34 @@ export default function SignupCard() {
         placeholder="••••••••"
         style={styles.input}
         secureTextEntry
+        value={password}
+        onChangeText={setPassword}
       />
-
       {/* Terms */}
       <View style={styles.termsRow}>
-        <View style={styles.checkbox} />
+        <TouchableOpacity
+          style={[
+            styles.checkbox,
+            acceptedTerms && { backgroundColor: "#FF6A00" },
+          ]}
+          onPress={() => setAcceptedTerms((prev) => !prev)}
+        />
         <Text style={styles.termsText}>
-          I agree to the{" "}
-          <Text style={styles.link}>Terms of Service</Text> and{" "}
+          I agree to the <Text style={styles.link}>Terms of Service</Text> and{" "}
           <Text style={styles.link}>Privacy Policy</Text>
         </Text>
       </View>
 
       {/* Create Account */}
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/verify-email")}>
-        <Text style={styles.buttonText}>Create Account</Text>
-      </TouchableOpacity>
+      <TouchableOpacity
+  style={styles.button}
+  onPress={handleSignUp}
+  disabled={loading}
+>
+  <Text style={styles.buttonText}>
+    {loading ? "Creating Account..." : "Create Account"}
+  </Text>
+</TouchableOpacity>
 
       {/* Divider */}
       <View style={styles.dividerRow}>
@@ -88,9 +144,7 @@ export default function SignupCard() {
       </View>
 
       {/* Footer */}
-      <Text style={styles.footerText}>
-        Your data is secure with us.
-      </Text>
+      <Text style={styles.footerText}>Your data is secure with us.</Text>
     </View>
   );
 }
