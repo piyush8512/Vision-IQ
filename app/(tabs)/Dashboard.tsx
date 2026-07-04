@@ -1,7 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
-import { ScreenSkeleton } from "../../components/layouts/ScreenSkeleton"
+import { ScreenSkeleton } from "../../components/layouts/ScreenSkeleton";
 
 export default function Dashboard() {
+  // TODO-API: FETCH_DASHBOARD_DATA
+  // Request: { userId }
+  // Response: { userStats { appointmentsThisMonth, symptomsLoggedThisWeek, daysUntilNextExam, healthScore }, upcomingAppointments[], recentSymptoms[], healthInsights[] }
+  
   return (
     <ScreenSkeleton>
       <View style={styles.content}>

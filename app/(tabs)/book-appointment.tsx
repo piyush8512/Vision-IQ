@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Platform,
-} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import React, { useState } from "react";
+import {
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
 
 type Props = {
   onClose: () => void;
@@ -34,6 +34,9 @@ export default function BookAppointmentMain({ onClose }: Props) {
       notes,
     };
 
+    // TODO-API: CREATE_APPOINTMENT
+    // Request: { userId, appointmentType, preferredDoctorId, preferredDate, visitType, notes }
+    // Response: { success, appointmentId, confirmationNumber, estimatedConfirmationTime }
     console.log("Appointment Requested:", payload);
     onClose(); // ✅ go back to home / appointments
   };

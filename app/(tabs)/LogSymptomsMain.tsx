@@ -1,13 +1,13 @@
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
+  ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
-  TextInput,
-  ScrollView,
 } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 type Props = {
   onClose: () => void;
@@ -43,6 +43,9 @@ export default function LogSymptomsMain({ onClose }: Props) {
       date: new Date(),
     };
 
+    // TODO-API: CREATE_SYMPTOM_LOG
+    // Request: { userId, eye, symptoms[], notes, timestamp }
+    // Response: { success, symptomLogId, savedAt }
     console.log("Saved Log:", data);
     onClose(); // ✅ GO BACK TO HOME
   };

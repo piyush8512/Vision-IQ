@@ -1,18 +1,20 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Pressable,
-  Platform,
-} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import {
+    Pressable,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from "react-native";
 
 export default function ProfileSetupCard() {
+  // TODO-API: CREATE_PROFILE_REQUEST
+  // Request: { userId, dateOfBirth, lastExamDate, gender, visionAids, medicalConditions }
+  // Response: { success, profileId }
+  
   const [dob, setDob] = useState("");
   const [lastExam, setLastExam] = useState("");
   const [gender, setGender] = useState<string | null>(null);

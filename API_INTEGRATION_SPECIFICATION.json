@@ -1,0 +1,1429 @@
+{
+  "project": {
+    "name": "Eyes Heroes Global Mobile App",
+    "framework": "Expo React Native",
+    "backend": "Supabase",
+    "version": "1.0.0",
+    "integrationDate": "2026-01-02"
+  },
+  "integrationEndpoints": [
+    {
+      "id": "auth_signup",
+      "name": "User Registration",
+      "module": "Authentication",
+      "files": [
+        {
+          "path": "components/signup-card.tsx",
+          "function": "handleCreateAccount",
+          "lineMarker": "// TODO-API: SIGNUP_REQUEST"
+        }
+      ],
+      "httpMethod": "POST",
+      "supabaseMethod": "supabase.auth.signUp",
+      "dataFlow": {
+        "request": {
+          "fullName": "string",
+          "email": "string",
+          "phone": "string | null",
+          "password": "string"
+        },
+        "response": {
+          "userId": "string (UUID)",
+          "sessionToken": "string",
+          "email": "string",
+          "requiresEmailVerification": "boolean"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "auth_verify_email",
+      "name": "Email Verification",
+      "module": "Authentication",
+      "files": [
+        {
+          "path": "components/verify-email-card.tsx",
+          "function": "handleVerify",
+          "lineMarker": "// TODO-API: VERIFY_EMAIL_REQUEST"
+        }
+      ],
+      "httpMethod": "POST",
+      "supabaseMethod": "supabase.auth.verifyOtp",
+      "dataFlow": {
+        "request": {
+          "email": "string",
+          "otp": "string (6 digits)"
+        },
+        "response": {
+          "success": "boolean",
+          "userId": "string",
+          "emailVerified": "boolean"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "auth_oauth",
+      "name": "OAuth Sign Up (Google/Apple)",
+      "module": "Authentication",
+      "files": [
+        {
+          "path": "components/signup-card.tsx",
+          "function": "googleSignUp / appleSignUp",
+          "lineMarker": "// TODO-API: OAUTH_SIGNUP"
+        }
+      ],
+      "httpMethod": "POST",
+      "supabaseMethod": "supabase.auth.signInWithOAuth",
+      "dataFlow": {
+        "request": {
+          "provider": "enum: google | apple"
+        },
+        "response": {
+          "userId": "string",
+          "sessionToken": "string",
+          "user": {
+            "email": "string",
+            "fullName": "string | null",
+            "avatarUrl": "string | null"
+          }
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "HIGH"
+    },
+    {
+      "id": "profile_create",
+      "name": "Create User Profile",
+      "module": "User Profile Management",
+      "files": [
+        {
+          "path": "components/profile-setup-card.tsx",
+          "function": "handleNext",
+          "lineMarker": "// TODO-API: CREATE_PROFILE_REQUEST"
+        }
+      ],
+      "httpMethod": "POST",
+      "supabaseMethod": "supabase.from('profiles').insert()",
+      "dataFlow": {
+        "request": {
+          "userId": "string (UUID)",
+          "dateOfBirth": "date (YYYY-MM-DD)",
+          "lastExamDate": "date (YYYY-MM-DD)",
+          "gender": "enum: male | female | other",
+          "visionAids": "enum: none | glasses | contacts | both"
+        },
+        "response": {
+          "success": "boolean",
+          "profileId": "string (UUID)"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "profile_fetch",
+      "name": "Fetch User Profile",
+      "module": "User Profile Management",
+      "files": [
+        {
+          "path": "app/(tabs)/Profile.tsx",
+          "function": "useEffect (on mount)",
+          "lineMarker": "// TODO-API: FETCH_PROFILE_REQUEST"
+        }
+      ],
+      "httpMethod": "GET",
+      "supabaseMethod": "supabase.from('profiles').select().single()",
+      "dataFlow": {
+        "request": {
+          "userId": "string (from auth context)"
+        },
+        "response": {
+          "name": "string",
+          "email": "string",
+          "phone": "string",
+          "dateOfBirth": "date",
+          "memberSince": "date",
+          "profileImageUrl": "string | null"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "profile_picture_upload",
+      "name": "Upload Profile Picture",
+      "module": "User Profile Management",
+      "files": [
+        {
+          "path": "app/(tabs)/Profile.tsx",
+          "function": "cameraButton.onPress",
+          "lineMarker": "// TODO-API: UPLOAD_PROFILE_PICTURE"
+        }
+      ],
+      "httpMethod": "POST",
+      "supabaseMethod": "supabase.storage.from('profile-pictures').upload()",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "imageFile": "File (binary)",
+          "mimeType": "enum: image/jpeg | image/png"
+        },
+        "response": {
+          "success": "boolean",
+          "profileImageUrl": "string"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "symptoms_log_create",
+      "name": "Create Symptom Log",
+      "module": "Symptoms & Health Tracking",
+      "files": [
+        {
+          "path": "app/(tabs)/LogSymptomsMain.tsx",
+          "function": "handleSave",
+          "lineMarker": "// TODO-API: CREATE_SYMPTOM_LOG"
+        }
+      ],
+      "httpMethod": "POST",
+      "supabaseMethod": "supabase.from('symptom_logs').insert()",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "eye": "enum: left | right | both",
+          "symptoms": "string[]",
+          "notes": "string",
+          "timestamp": "datetime"
+        },
+        "response": {
+          "success": "boolean",
+          "symptomLogId": "string",
+          "savedAt": "datetime"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "HIGH"
+    },
+    {
+      "id": "symptoms_history_fetch",
+      "name": "Fetch Symptom History",
+      "module": "Symptoms & Health Tracking",
+      "files": [
+        {
+          "path": "app/(tabs)/Symptoms.tsx",
+          "function": "useEffect (on mount)",
+          "lineMarker": "// TODO-API: FETCH_SYMPTOM_HISTORY"
+        }
+      ],
+      "httpMethod": "GET",
+      "supabaseMethod": "supabase.from('symptom_logs').select().order()",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "dateRange": {
+            "startDate": "date | null",
+            "endDate": "date | null"
+          }
+        },
+        "response": {
+          "symptomLogs": [
+            {
+              "id": "string",
+              "eye": "string",
+              "symptoms": "string[]",
+              "notes": "string",
+              "timestamp": "datetime"
+            }
+          ]
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "HIGH"
+    },
+    {
+      "id": "appointment_create",
+      "name": "Create Appointment Booking",
+      "module": "Appointments",
+      "files": [
+        {
+          "path": "app/(tabs)/book-appointment.tsx",
+          "function": "handleSubmit",
+          "lineMarker": "// TODO-API: CREATE_APPOINTMENT"
+        }
+      ],
+      "httpMethod": "POST",
+      "supabaseMethod": "supabase.from('appointments').insert()",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "appointmentType": "string",
+          "preferredDoctorId": "string",
+          "preferredDate": "datetime",
+          "visitType": "enum: in-person | virtual",
+          "notes": "string"
+        },
+        "response": {
+          "success": "boolean",
+          "appointmentId": "string",
+          "confirmationNumber": "string",
+          "estimatedConfirmationTime": "datetime"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "HIGH"
+    },
+    {
+      "id": "appointment_upcoming_fetch",
+      "name": "Fetch Upcoming Appointments",
+      "module": "Appointments",
+      "files": [
+        {
+          "path": "app/(tabs)/appointments.tsx",
+          "function": "useEffect (on mount)",
+          "lineMarker": "// TODO-API: FETCH_UPCOMING_APPOINTMENTS"
+        }
+      ],
+      "httpMethod": "GET",
+      "supabaseMethod": "supabase.from('appointments').select().gt().order()",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "status": "enum: upcoming | past",
+          "limit": "number"
+        },
+        "response": {
+          "appointments": [
+            {
+              "id": "string",
+              "appointmentType": "string",
+              "doctorName": "string",
+              "doctorId": "string",
+              "dateTime": "datetime",
+              "location": "string",
+              "visitType": "string",
+              "status": "enum: confirmed | pending | cancelled",
+              "meetingLink": "string | null"
+            }
+          ]
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "HIGH"
+    },
+    {
+      "id": "appointment_past_fetch",
+      "name": "Fetch Past Appointments",
+      "module": "Appointments",
+      "files": [
+        {
+          "path": "app/(tabs)/appointments-past.tsx",
+          "function": "useEffect (on mount)",
+          "lineMarker": "// TODO-API: FETCH_PAST_APPOINTMENTS"
+        }
+      ],
+      "httpMethod": "GET",
+      "supabaseMethod": "supabase.from('appointments').select().lt().order()",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "status": "enum: completed | cancelled"
+        },
+        "response": {
+          "appointments": [
+            {
+              "id": "string",
+              "appointmentType": "string",
+              "doctorName": "string",
+              "dateTime": "datetime",
+              "location": "string",
+              "diagnosis": "string | null",
+              "prescriptionIssued": "boolean | null",
+              "notes": "string | null"
+            }
+          ]
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "appointment_reschedule",
+      "name": "Reschedule Appointment",
+      "module": "Appointments",
+      "files": [
+        {
+          "path": "app/(tabs)/appointments.tsx",
+          "function": "rescheduleHandler",
+          "lineMarker": "// TODO-API: RESCHEDULE_APPOINTMENT"
+        }
+      ],
+      "httpMethod": "PATCH",
+      "supabaseMethod": "supabase.from('appointments').update().eq()",
+      "dataFlow": {
+        "request": {
+          "appointmentId": "string",
+          "userId": "string",
+          "newDate": "datetime",
+          "newTime": "string",
+          "reason": "string | null"
+        },
+        "response": {
+          "success": "boolean",
+          "appointmentId": "string",
+          "newDateTime": "datetime"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "appointment_cancel",
+      "name": "Cancel Appointment",
+      "module": "Appointments",
+      "files": [
+        {
+          "path": "app/(tabs)/appointments.tsx",
+          "function": "cancelHandler",
+          "lineMarker": "// TODO-API: CANCEL_APPOINTMENT"
+        }
+      ],
+      "httpMethod": "PATCH",
+      "supabaseMethod": "supabase.from('appointments').update().eq()",
+      "dataFlow": {
+        "request": {
+          "appointmentId": "string",
+          "userId": "string",
+          "cancellationReason": "string | null"
+        },
+        "response": {
+          "success": "boolean",
+          "appointmentId": "string",
+          "status": "enum: cancelled"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "exam_records_fetch",
+      "name": "Fetch Eye Exam Records",
+      "module": "Eye Exams",
+      "files": [
+        {
+          "path": "app/(tabs)/Exams.tsx",
+          "function": "useEffect (on mount)",
+          "lineMarker": "// TODO-API: FETCH_EXAM_RECORDS"
+        }
+      ],
+      "httpMethod": "GET",
+      "supabaseMethod": "supabase.from('eye_exams').select().order()",
+      "dataFlow": {
+        "request": {
+          "userId": "string"
+        },
+        "response": {
+          "exams": [
+            {
+              "id": "string",
+              "examType": "string",
+              "examDate": "date",
+              "doctorName": "string",
+              "doctorId": "string",
+              "clinic": "string",
+              "visionPrescription": {
+                "leftEye": "string",
+                "rightEye": "string"
+              },
+              "diagnosis": "string | null",
+              "recommendations": "string[] | null",
+              "documentUrl": "string | null",
+              "notes": "string | null"
+            }
+          ]
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "HIGH"
+    },
+    {
+      "id": "exam_document_upload",
+      "name": "Upload Exam Document",
+      "module": "Eye Exams",
+      "files": [
+        {
+          "path": "app/(tabs)/Exams.tsx",
+          "function": "uploadHandler",
+          "lineMarker": "// TODO-API: UPLOAD_EXAM_DOCUMENT"
+        }
+      ],
+      "httpMethod": "POST",
+      "supabaseMethod": "supabase.storage.from('exam-documents').upload()",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "examDate": "date",
+          "doctorName": "string",
+          "clinic": "string",
+          "document": "File (PDF/Image)",
+          "visionPrescription": "object | null",
+          "diagnosis": "string | null"
+        },
+        "response": {
+          "success": "boolean",
+          "examId": "string",
+          "documentUrl": "string"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "family_history_fetch",
+      "name": "Fetch Family Health History",
+      "module": "Family Health History",
+      "files": [
+        {
+          "path": "app/(tabs)/familyHealthHistory.tsx",
+          "function": "useEffect (on mount)",
+          "lineMarker": "// TODO-API: FETCH_FAMILY_HISTORY"
+        }
+      ],
+      "httpMethod": "GET",
+      "supabaseMethod": "supabase.from('family_health_history').select().eq()",
+      "dataFlow": {
+        "request": {
+          "userId": "string"
+        },
+        "response": {
+          "familyMembers": [
+            {
+              "id": "string",
+              "userId": "string",
+              "name": "string",
+              "relation": "string",
+              "conditions": "string[]",
+              "diagnosisAge": "number | null",
+              "notes": "string | null"
+            }
+          ]
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "HIGH"
+    },
+    {
+      "id": "family_member_create",
+      "name": "Add Family Member",
+      "module": "Family Health History",
+      "files": [
+        {
+          "path": "app/(tabs)/familyHealthHistory.tsx",
+          "function": "addFamilyMember",
+          "lineMarker": "// TODO-API: CREATE_FAMILY_MEMBER"
+        }
+      ],
+      "httpMethod": "POST",
+      "supabaseMethod": "supabase.from('family_health_history').insert()",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "name": "string",
+          "relation": "string",
+          "conditions": "string[]",
+          "notes": "string | null"
+        },
+        "response": {
+          "success": "boolean",
+          "memberId": "string"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "family_member_update",
+      "name": "Update Family Member Conditions",
+      "module": "Family Health History",
+      "files": [
+        {
+          "path": "app/(tabs)/familyHealthHistory.tsx",
+          "function": "addCondition",
+          "lineMarker": "// TODO-API: UPDATE_FAMILY_MEMBER"
+        }
+      ],
+      "httpMethod": "PATCH",
+      "supabaseMethod": "supabase.from('family_health_history').update().eq()",
+      "dataFlow": {
+        "request": {
+          "memberId": "string",
+          "userId": "string",
+          "newCondition": "string"
+        },
+        "response": {
+          "success": "boolean",
+          "updatedMember": "object"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "family_member_delete",
+      "name": "Delete Family Member",
+      "module": "Family Health History",
+      "files": [
+        {
+          "path": "app/(tabs)/familyHealthHistory.tsx",
+          "function": "deleteFamilyMember",
+          "lineMarker": "// TODO-API: DELETE_FAMILY_MEMBER"
+        }
+      ],
+      "httpMethod": "DELETE",
+      "supabaseMethod": "supabase.from('family_health_history').delete().eq()",
+      "dataFlow": {
+        "request": {
+          "memberId": "string",
+          "userId": "string"
+        },
+        "response": {
+          "success": "boolean"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "doctor_search",
+      "name": "Search Doctors by Location",
+      "module": "Doctor Finder",
+      "files": [
+        {
+          "path": "app/(tabs)/DocFinder.tsx",
+          "function": "searchDoctors",
+          "lineMarker": "// TODO-API: SEARCH_DOCTORS"
+        }
+      ],
+      "httpMethod": "GET",
+      "supabaseMethod": "supabase.rpc('find_doctors_nearby')",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "latitude": "number",
+          "longitude": "number",
+          "radius": "number (km)",
+          "specialization": "string | null",
+          "acceptsInsurance": "string | null",
+          "availableNow": "boolean | null"
+        },
+        "response": {
+          "doctors": [
+            {
+              "id": "string",
+              "name": "string",
+              "specialization": "string",
+              "clinicName": "string",
+              "address": "string",
+              "phone": "string",
+              "website": "string | null",
+              "rating": "number (1-5)",
+              "reviewCount": "number",
+              "acceptedInsurances": "string[]",
+              "availableSlots": "datetime[]",
+              "latitude": "number",
+              "longitude": "number",
+              "distance": "number (km) | null"
+            }
+          ]
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "HIGH"
+    },
+    {
+      "id": "doctor_details_fetch",
+      "name": "Fetch Doctor Details",
+      "module": "Doctor Finder",
+      "files": [
+        {
+          "path": "app/(tabs)/DocFinder.tsx",
+          "function": "getDoctorDetails",
+          "lineMarker": "// TODO-API: FETCH_DOCTOR_DETAILS"
+        }
+      ],
+      "httpMethod": "GET",
+      "supabaseMethod": "supabase.from('doctors').select().eq()",
+      "dataFlow": {
+        "request": {
+          "doctorId": "string"
+        },
+        "response": {
+          "doctor": {
+            "id": "string",
+            "name": "string",
+            "specialization": "string",
+            "bio": "string",
+            "clinicName": "string",
+            "address": "string",
+            "phone": "string",
+            "email": "string",
+            "website": "string | null",
+            "qualifications": "string[]",
+            "yearsOfExperience": "number",
+            "rating": "number",
+            "reviews": [
+              {
+                "userId": "string",
+                "userName": "string",
+                "rating": "number",
+                "comment": "string",
+                "date": "date"
+              }
+            ],
+            "acceptedInsurances": "string[]",
+            "availableSlots": "datetime[]",
+            "servicesOffered": "string[]"
+          }
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "HIGH"
+    },
+    {
+      "id": "home_data_fetch",
+      "name": "Fetch Home Screen Data",
+      "module": "Home & Dashboard",
+      "files": [
+        {
+          "path": "app/(tabs)/Home.tsx",
+          "function": "useEffect (on mount)",
+          "lineMarker": "// TODO-API: FETCH_HOME_DATA"
+        }
+      ],
+      "httpMethod": "GET",
+      "supabaseMethod": "supabase.rpc('get_home_screen_data')",
+      "dataFlow": {
+        "request": {
+          "userId": "string"
+        },
+        "response": {
+          "user": {
+            "firstName": "string"
+          },
+          "visionTrend": {
+            "status": "enum: improving | stable | declining",
+            "description": "string",
+            "changePercent": "number",
+            "period": "enum: month | quarter"
+          },
+          "screenTime": {
+            "hoursToday": "number",
+            "averageThisWeek": "number",
+            "trend": "enum: up | down | stable"
+          },
+          "upcomingAppointments": "object[]",
+          "dailyTips": [
+            {
+              "id": "string",
+              "title": "string",
+              "description": "string",
+              "category": "string"
+            }
+          ],
+          "recentExams": "object[]"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "dashboard_data_fetch",
+      "name": "Fetch Dashboard Data",
+      "module": "Home & Dashboard",
+      "files": [
+        {
+          "path": "app/(tabs)/Dashboard.tsx",
+          "function": "useEffect (on mount)",
+          "lineMarker": "// TODO-API: FETCH_DASHBOARD_DATA"
+        }
+      ],
+      "httpMethod": "GET",
+      "supabaseMethod": "supabase.rpc('get_dashboard_data')",
+      "dataFlow": {
+        "request": {
+          "userId": "string"
+        },
+        "response": {
+          "userStats": {
+            "appointmentsThisMonth": "number",
+            "symptomsLoggedThisWeek": "number",
+            "daysUntilNextExam": "number",
+            "healthScore": "number (0-100)"
+          },
+          "upcomingAppointments": "object[]",
+          "recentSymptoms": "object[]",
+          "healthInsights": "object[]"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "HIGH"
+    },
+    {
+      "id": "prep_content_fetch",
+      "name": "Fetch Appointment Prep Content",
+      "module": "Home & Dashboard",
+      "files": [
+        {
+          "path": "app/(tabs)/Prep.tsx",
+          "function": "useEffect (on mount)",
+          "lineMarker": "// TODO-API: FETCH_PREP_CONTENT"
+        }
+      ],
+      "httpMethod": "GET",
+      "supabaseMethod": "supabase.from('appointment_prep_guides').select().eq()",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "appointmentId": "string | null"
+        },
+        "response": {
+          "prepGuide": {
+            "id": "string",
+            "title": "string",
+            "description": "string",
+            "steps": [
+              {
+                "step": "number",
+                "title": "string",
+                "description": "string",
+                "icon": "string"
+              }
+            ],
+            "estimatedTime": "number (minutes)",
+            "uploadedDocuments": "string[] | null"
+          },
+          "questionnaire": {
+            "id": "string",
+            "questions": [
+              {
+                "id": "string",
+                "question": "string",
+                "type": "enum: text | select | multiselect",
+                "required": "boolean",
+                "options": "string[] | null"
+              }
+            ]
+          }
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "prep_responses_save",
+      "name": "Save Appointment Prep Responses",
+      "module": "Home & Dashboard",
+      "files": [
+        {
+          "path": "app/(tabs)/Prep.tsx",
+          "function": "handleSubmit",
+          "lineMarker": "// TODO-API: SAVE_PREP_RESPONSES"
+        }
+      ],
+      "httpMethod": "POST",
+      "supabaseMethod": "supabase.from('appointment_prep_responses').insert()",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "appointmentId": "string",
+          "responses": {
+            "[questionId]": "string | string[]"
+          },
+          "uploadedDocuments": "File[] | null",
+          "submittedAt": "datetime"
+        },
+        "response": {
+          "success": "boolean",
+          "prepId": "string",
+          "status": "enum: submitted"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "tips_fetch",
+      "name": "Fetch Educational Tips",
+      "module": "Learning Center",
+      "files": [
+        {
+          "path": "app/(tabs)/LearnTips.tsx",
+          "function": "useEffect (on mount)",
+          "lineMarker": "// TODO-API: FETCH_EDUCATIONAL_TIPS"
+        }
+      ],
+      "httpMethod": "GET",
+      "supabaseMethod": "supabase.from('educational_tips').select().order()",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "category": "string | null",
+          "limit": "number | null"
+        },
+        "response": {
+          "tips": [
+            {
+              "id": "string",
+              "title": "string",
+              "description": "string",
+              "category": "string",
+              "content": "string (HTML/Markdown)",
+              "imageUrl": "string | null",
+              "author": "string | null",
+              "publishedDate": "date",
+              "readingTime": "number (minutes)"
+            }
+          ]
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "goals_fetch_save",
+      "name": "Fetch and Save Eye Care Goals",
+      "module": "User Goals",
+      "files": [
+        {
+          "path": "app/eye-care-goals.tsx",
+          "function": "useEffect / handleSaveGoals",
+          "lineMarker": "// TODO-API: FETCH_SAVE_GOALS"
+        }
+      ],
+      "httpMethod": "GET/POST",
+      "supabaseMethod": "supabase.from('user_goals').select() / .insert()",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "goals": [
+            {
+              "id": "string | null",
+              "title": "string",
+              "description": "string",
+              "category": "enum: vision | health | lifestyle",
+              "targetDate": "date | null"
+            }
+          ]
+        },
+        "response": {
+          "goals": [
+            {
+              "id": "string",
+              "title": "string",
+              "description": "string",
+              "category": "string",
+              "targetDate": "date | null",
+              "progress": "number (0-100)",
+              "status": "enum: not-started | in-progress | completed",
+              "createdAt": "date"
+            }
+          ]
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "logout",
+      "name": "User Logout",
+      "module": "Authentication",
+      "files": [
+        {
+          "path": "app/(tabs)/Logout.tsx",
+          "function": "handleLogout",
+          "lineMarker": "// TODO-API: LOGOUT_REQUEST"
+        }
+      ],
+      "httpMethod": "POST",
+      "supabaseMethod": "supabase.auth.signOut()",
+      "dataFlow": {
+        "request": {
+          "userId": "string",
+          "sessionToken": "string"
+        },
+        "response": {
+          "success": "boolean",
+          "message": "string"
+        }
+      },
+      "status": "NOT_STARTED",
+      "priority": "HIGH"
+    }
+  ],
+  "supabaseTables": {
+    "users": {
+      "description": "Extends Supabase Auth",
+      "primaryKey": "id (UUID)",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "constraint": "PRIMARY KEY REFERENCES auth.users(id)"
+        },
+        {
+          "name": "full_name",
+          "type": "TEXT"
+        },
+        {
+          "name": "phone",
+          "type": "TEXT"
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP"
+        }
+      ]
+    },
+    "profiles": {
+      "description": "User Profile Information",
+      "primaryKey": "id (UUID)",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "constraint": "PRIMARY KEY"
+        },
+        {
+          "name": "user_id",
+          "type": "UUID",
+          "constraint": "REFERENCES users(id)"
+        },
+        {
+          "name": "date_of_birth",
+          "type": "DATE"
+        },
+        {
+          "name": "gender",
+          "type": "TEXT"
+        },
+        {
+          "name": "vision_aids",
+          "type": "TEXT"
+        },
+        {
+          "name": "last_exam_date",
+          "type": "DATE"
+        },
+        {
+          "name": "profile_image_url",
+          "type": "TEXT"
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP"
+        }
+      ]
+    },
+    "symptom_logs": {
+      "description": "Symptom tracking entries",
+      "primaryKey": "id (UUID)",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "constraint": "PRIMARY KEY"
+        },
+        {
+          "name": "user_id",
+          "type": "UUID",
+          "constraint": "REFERENCES users(id)"
+        },
+        {
+          "name": "eye",
+          "type": "TEXT",
+          "values": ["left", "right", "both"]
+        },
+        {
+          "name": "symptoms",
+          "type": "TEXT[]"
+        },
+        {
+          "name": "notes",
+          "type": "TEXT"
+        },
+        {
+          "name": "timestamp",
+          "type": "TIMESTAMP"
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP"
+        }
+      ]
+    },
+    "appointments": {
+      "description": "User appointments",
+      "primaryKey": "id (UUID)",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "constraint": "PRIMARY KEY"
+        },
+        {
+          "name": "user_id",
+          "type": "UUID",
+          "constraint": "REFERENCES users(id)"
+        },
+        {
+          "name": "doctor_id",
+          "type": "UUID"
+        },
+        {
+          "name": "appointment_type",
+          "type": "TEXT"
+        },
+        {
+          "name": "preferred_date",
+          "type": "TIMESTAMP"
+        },
+        {
+          "name": "visit_type",
+          "type": "TEXT",
+          "values": ["in-person", "virtual"]
+        },
+        {
+          "name": "status",
+          "type": "TEXT",
+          "values": ["pending", "confirmed", "cancelled"]
+        },
+        {
+          "name": "notes",
+          "type": "TEXT"
+        },
+        {
+          "name": "meeting_link",
+          "type": "TEXT"
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP"
+        }
+      ]
+    },
+    "eye_exams": {
+      "description": "Eye exam records",
+      "primaryKey": "id (UUID)",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "constraint": "PRIMARY KEY"
+        },
+        {
+          "name": "user_id",
+          "type": "UUID",
+          "constraint": "REFERENCES users(id)"
+        },
+        {
+          "name": "doctor_id",
+          "type": "UUID"
+        },
+        {
+          "name": "exam_date",
+          "type": "DATE"
+        },
+        {
+          "name": "exam_type",
+          "type": "TEXT"
+        },
+        {
+          "name": "vision_prescription",
+          "type": "JSONB"
+        },
+        {
+          "name": "diagnosis",
+          "type": "TEXT"
+        },
+        {
+          "name": "recommendations",
+          "type": "TEXT[]"
+        },
+        {
+          "name": "document_url",
+          "type": "TEXT"
+        },
+        {
+          "name": "notes",
+          "type": "TEXT"
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP"
+        }
+      ]
+    },
+    "family_health_history": {
+      "description": "Family health history records",
+      "primaryKey": "id (UUID)",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "constraint": "PRIMARY KEY"
+        },
+        {
+          "name": "user_id",
+          "type": "UUID",
+          "constraint": "REFERENCES users(id)"
+        },
+        {
+          "name": "name",
+          "type": "TEXT"
+        },
+        {
+          "name": "relation",
+          "type": "TEXT"
+        },
+        {
+          "name": "conditions",
+          "type": "TEXT[]"
+        },
+        {
+          "name": "diagnosis_age",
+          "type": "INTEGER"
+        },
+        {
+          "name": "notes",
+          "type": "TEXT"
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP"
+        }
+      ]
+    },
+    "doctors": {
+      "description": "Doctor directory",
+      "primaryKey": "id (UUID)",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "constraint": "PRIMARY KEY"
+        },
+        {
+          "name": "name",
+          "type": "TEXT"
+        },
+        {
+          "name": "specialization",
+          "type": "TEXT"
+        },
+        {
+          "name": "clinic_name",
+          "type": "TEXT"
+        },
+        {
+          "name": "address",
+          "type": "TEXT"
+        },
+        {
+          "name": "phone",
+          "type": "TEXT"
+        },
+        {
+          "name": "email",
+          "type": "TEXT"
+        },
+        {
+          "name": "website",
+          "type": "TEXT"
+        },
+        {
+          "name": "latitude",
+          "type": "FLOAT"
+        },
+        {
+          "name": "longitude",
+          "type": "FLOAT"
+        },
+        {
+          "name": "years_of_experience",
+          "type": "INTEGER"
+        },
+        {
+          "name": "qualifications",
+          "type": "TEXT[]"
+        },
+        {
+          "name": "accepted_insurances",
+          "type": "TEXT[]"
+        },
+        {
+          "name": "rating",
+          "type": "FLOAT"
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP"
+        }
+      ]
+    },
+    "user_settings": {
+      "description": "User settings and preferences",
+      "primaryKey": "id (UUID)",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "constraint": "PRIMARY KEY"
+        },
+        {
+          "name": "user_id",
+          "type": "UUID",
+          "constraint": "REFERENCES users(id)"
+        },
+        {
+          "name": "notifications_enabled",
+          "type": "BOOLEAN"
+        },
+        {
+          "name": "privacy_level",
+          "type": "TEXT"
+        },
+        {
+          "name": "language",
+          "type": "TEXT"
+        },
+        {
+          "name": "region",
+          "type": "TEXT"
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP"
+        }
+      ]
+    },
+    "educational_tips": {
+      "description": "Educational content library",
+      "primaryKey": "id (UUID)",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "constraint": "PRIMARY KEY"
+        },
+        {
+          "name": "title",
+          "type": "TEXT"
+        },
+        {
+          "name": "description",
+          "type": "TEXT"
+        },
+        {
+          "name": "category",
+          "type": "TEXT"
+        },
+        {
+          "name": "content",
+          "type": "TEXT"
+        },
+        {
+          "name": "image_url",
+          "type": "TEXT"
+        },
+        {
+          "name": "author",
+          "type": "TEXT"
+        },
+        {
+          "name": "published_date",
+          "type": "TIMESTAMP"
+        },
+        {
+          "name": "reading_time",
+          "type": "INTEGER"
+        }
+      ]
+    },
+    "user_goals": {
+      "description": "User eye care goals",
+      "primaryKey": "id (UUID)",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "constraint": "PRIMARY KEY"
+        },
+        {
+          "name": "user_id",
+          "type": "UUID",
+          "constraint": "REFERENCES users(id)"
+        },
+        {
+          "name": "title",
+          "type": "TEXT"
+        },
+        {
+          "name": "description",
+          "type": "TEXT"
+        },
+        {
+          "name": "category",
+          "type": "TEXT"
+        },
+        {
+          "name": "target_date",
+          "type": "DATE"
+        },
+        {
+          "name": "progress",
+          "type": "INTEGER"
+        },
+        {
+          "name": "status",
+          "type": "TEXT",
+          "values": ["not-started", "in-progress", "completed"]
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP"
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP"
+        }
+      ]
+    }
+  },
+  "developmentNotes": {
+    "markerFormat": "// TODO-API: [ENDPOINT_ID]",
+    "markerUsage": "Search for this marker in source files to find where API integration should be placed",
+    "implementation": "Replace TODO-API markers with actual Supabase calls following the dataFlow specification",
+    "testing": "Test each integration endpoint with real Supabase credentials before deployment",
+    "security": "Implement Row-Level Security (RLS) on all Supabase tables to ensure data isolation per user"
+  }
+}

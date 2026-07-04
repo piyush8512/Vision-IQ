@@ -1,12 +1,12 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import {
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
 
 export default function SignupCard() {
   return (
@@ -66,6 +66,9 @@ export default function SignupCard() {
       </View>
 
       {/* Create Account */}
+      {/* TODO-API: SIGNUP_REQUEST */}
+      {/* Request: { fullName, email, phone, password } */}
+      {/* Response: { userId, sessionToken, requiresEmailVerification } */}
       <TouchableOpacity style={styles.button} onPress={() => router.push("/verify-email")}>
         <Text style={styles.buttonText}>Create Account</Text>
       </TouchableOpacity>
@@ -78,6 +81,9 @@ export default function SignupCard() {
       </View>
 
       {/* Social */}
+      {/* TODO-API: OAUTH_SIGNUP */}
+      {/* Provider: google | apple */}
+      {/* Response: { userId, sessionToken, user { email, fullName, avatarUrl } } */}
       <View style={styles.socialRow}>
         <TouchableOpacity style={styles.socialButton}>
           <Text>Google</Text>

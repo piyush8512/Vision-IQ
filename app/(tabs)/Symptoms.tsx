@@ -1,7 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
-import { ScreenSkeleton } from "../../components/layouts/ScreenSkeleton"
+import { ScreenSkeleton } from "../../components/layouts/ScreenSkeleton";
 
 export default function Dashboard() {
+  // TODO-API: FETCH_SYMPTOM_HISTORY
+  // Request: { userId, dateRange: { startDate, endDate } }
+  // Response: { symptomLogs[] with id, eye, symptoms[], notes, timestamp }
+  
   return (
     <ScreenSkeleton>
       <View style={styles.content}>
