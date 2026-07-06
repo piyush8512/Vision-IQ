@@ -1,21 +1,24 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 type Props = {
   title: string;
   icon: keyof typeof Ionicons.glyphMap;
   color: string;
+  onPress: () => void;
 };
 
-export default function SmallBox({ title, icon, color }: Props) {
+export default function SmallBox({ title, icon, color, onPress }: Props) {
   return (
-    <View style={styles.box}>
-      <View style={[styles.iconWrap, { backgroundColor: color }]}>
-        <Ionicons name={icon} size={18} color="#FFFFFF" />
-      </View>
+    <TouchableOpacity
+      style={[styles.box, { backgroundColor: color }]}
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
+      <Ionicons name={icon} size={22} color="#fff" />
       <Text style={styles.text}>{title}</Text>
-    </View>
+    </TouchableOpacity>
   );
 }
 

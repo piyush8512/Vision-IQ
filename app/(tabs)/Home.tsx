@@ -1,20 +1,26 @@
 import React, { useState } from "react";
 import {
+  Modal,
   ScrollView,
   StyleSheet,
   View,
-  Modal,
 } from "react-native";
 
-import Header from "@/components/Header";
-import Card from "@/components/Card";
-import SmallBox from "@/components/SmallBox";
-import { ScreenSkeleton } from "@/components/layouts/ScreenSkeleton";
 import LogSymptomsMain from "@/app/(tabs)/LogSymptomsMain";
 import BookAppointmentMain from "@/app/(tabs)/book-appointment";
+import Card from "@/components/Card";
+import Header from "@/components/Header";
+import SmallBox from "@/components/SmallBox";
+import { ScreenSkeleton } from "@/components/layouts/ScreenSkeleton";
+import { router } from "expo-router";
+
 
 
 export default function HomeScreen() {
+  // TODO-API: FETCH_HOME_DATA
+  // Request: { userId }
+  // Response: { user, visionTrend, screenTime, upcomingAppointments, dailyTips, recentExams }
+  
   const [showLogSymptoms, setShowLogSymptoms] = useState(false);
 
   return (
@@ -74,12 +80,18 @@ export default function HomeScreen() {
 
         {/* Quick Actions */}
         <View style={styles.grid}>
-          <SmallBox title="My Notes" icon="document-outline" color="#F59E0B" />
-          <SmallBox title="Symptom Tracker" icon="pulse-outline" color="#EF4444" />
-          <SmallBox title="Find Doctor" icon="location-outline" color="#3B82F6" />
-          <SmallBox title="Family History" icon="people-outline" color="#8B5CF6" />
-          <SmallBox title="Appointment Prep" icon="calendar-outline" color="#10B981" />
-          <SmallBox title="Exam Records" icon="folder-outline" color="#6366F1" />
+          <SmallBox title="My Notes" icon="document-outline" color="#F59E0B" onPress={()=>router.push("/AppointmentNotesScreen")}/>
+          <SmallBox title="Symptom Tracker" icon="pulse-outline" color="#EF4444" onPress={()=> console.log('not implemented')}/>
+          <SmallBox title="Find Doctor" icon="location-outline" color="#3B82F6" onPress={() => router.push("/(tabs)/DocFinder")}/>
+          <SmallBox
+  title="Family History"
+  icon="people-outline"
+  color="#8B5CF6"
+  onPress={() => router.push("/familyHealthHistory")}
+/>
+
+          <SmallBox title="Appointment Prep" icon="calendar-outline" color="#10B981" onPress={() => router.push("/AppointmentPrepScreen")}/>
+          <SmallBox title="Exam Records" icon="folder-outline" color="#6366F1" onPress={()=> router.push("/Exams")}/>
         </View>
 
         {/* Recent Exams */}
@@ -107,27 +119,23 @@ export default function HomeScreen() {
           <LogSymptomsMain onClose={() => setShowLogSymptoms(false)} />
         </View>
       </Modal>
+
+      {/* Book Appointment Tab */}
+      <Modal
+        visible={showBook}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowBook(false)}
+      >
+        <View style={styles.modalWrapper}>
+          <BookAppointmentMain onClose={() => setShowBook(false)} />
+        </View>
+      </Modal>
     </ScreenSkeleton>
   );
 }
-const [showBook, setShowBook] = useState(false);
 
-<Modal
-  visible={showBook}
-  animationType="slide"
-  transparent
-  onRequestClose={() => setShowBook(false)}
->
-  <View
-    style={{
-      flex: 1,
-      justifyContent: "flex-end",
-      backgroundColor: "rgba(0,0,0,0.3)",
-    }}
-  >
-    <BookAppointmentMain onClose={() => setShowBook(false)} />
-  </View>
-</Modal>
+const [showBook, setShowBook] = useState(false);
 
 
 const styles = StyleSheet.create({

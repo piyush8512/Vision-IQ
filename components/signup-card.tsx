@@ -167,6 +167,9 @@ async function handleGoogleLogin() {
       </View>
 
       {/* Social */}
+      {/* TODO-API: OAUTH_SIGNUP */}
+      {/* Provider: google | apple */}
+      {/* Response: { userId, sessionToken, user { email, fullName, avatarUrl } } */}
       <View style={styles.socialRow}>
         <TouchableOpacity 
           style={styles.socialButton}
