@@ -1,6 +1,7 @@
+import { getProfile } from "@/api/profile";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Pressable,
     StyleSheet,
@@ -20,6 +21,29 @@ export default function ProfileSetupCard() {
   const [gender, setGender] = useState<string | null>(null);
   const [visionAid, setVisionAid] = useState<string | null>(null);
   const [showPicker, setShowPicker] = useState(false);
+
+useEffect(() => {
+async function loadProfile(){
+try{
+const profile = await getProfile();
+if(profile.date_of_birth){
+ setDob(profile.date_of_birth);
+}
+if(profile.gender){
+ setGender(profile.gender);
+}
+if(profile.vision_aids){
+ setVisionAid(profile.vision_aids);
+}
+if(profile.last_exam_date){
+ setLastExam(profile.last_exam_date);
+}
+}catch(error){
+console.log(error);
+}
+}
+loadProfile();
+},[]);
 
   const formatDate = (date: Date) =>
     date.toLocaleDateString("en-GB");
@@ -132,7 +156,15 @@ export default function ProfileSetupCard() {
           !(dob && gender && visionAid) && styles.buttonDisabled,
         ]}
         disabled={!(dob && gender && visionAid)}
-        onPress={() => router.push("/eye-care-goals")}
+        onPress={() =>   router.push({
+    pathname: "/eye-care-goals",
+    params:{
+      dob,
+      lastExam,
+      gender,
+      visionAid
+    }
+  })}
       >
         <Text style={styles.buttonText}>Continue</Text>
       </TouchableOpacity>

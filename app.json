@@ -20,7 +20,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.piyush851.eyeheroesapp"
+      // "package": "com.piyush851.eyeheroesapp"
+      "package": "com.eyeheroes.app"
     },
     "web": {
       "output": "static",

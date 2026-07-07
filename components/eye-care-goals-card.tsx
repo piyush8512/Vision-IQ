@@ -6,8 +6,9 @@ import {
   Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
+import { completeOnboarding } from "@/api/profile";
 
 const GOALS = [
   {
@@ -37,7 +38,36 @@ const GOALS = [
 ];
 
 export default function EyeCareGoalsCard() {
+const {
+ dob,
+ lastExam,
+ gender,
+ visionAid
+} = useLocalSearchParams();
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
+
+  async function handleComplete(){
+try{
+await completeOnboarding({
+date_of_birth: dob as string,
+gender: gender as 
+| "Female"
+| "Male"
+| "Non-binary"
+| "Prefer not to say",
+
+vision_aids: visionAid as
+| "Glasses"
+| "Contacts"
+| "None",
+last_exam_date: lastExam as string,
+eye_care_goals: selectedGoals
+});
+router.replace("/onboarding-complete");
+}catch(error){
+console.log(error);
+}
+}
 
   const toggleGoal = (id: string) => {
     setSelectedGoals((prev) =>
@@ -73,7 +103,7 @@ export default function EyeCareGoalsCard() {
 
       {/* Goals */}
       {GOALS.map((goal) => {
-        const selected = selectedGoals.includes(goal.id);
+        const selected = selectedGoals.includes(goal.title);
         return (
           <Pressable
             key={goal.id}
@@ -81,7 +111,7 @@ export default function EyeCareGoalsCard() {
               styles.goalItem,
               selected && styles.goalItemSelected,
             ]}
-            onPress={() => toggleGoal(goal.id)}
+            onPress={() => toggleGoal(goal.title)}
           >
             <View style={styles.goalLeft}>
               <View style={styles.iconBox}>
@@ -118,7 +148,7 @@ export default function EyeCareGoalsCard() {
           selectedGoals.length === 0 && styles.buttonDisabled,
         ]}
         disabled={selectedGoals.length === 0}
-        onPress={() => router.push("/onboarding-complete")}
+        onPress={handleComplete}
       >
         <Text style={styles.buttonText}>Continue</Text>
       </TouchableOpacity>

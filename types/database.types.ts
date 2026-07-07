@@ -42,18 +42,36 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          date_of_birth: string | null
+          eye_care_goals: string[] | null
           full_name: string | null
+          gender: string | null
           id: string
+          last_exam_date: string | null
+          updated_at: string | null
+          vision_aids: string | null
         }
         Insert: {
           created_at?: string
+          date_of_birth?: string | null
+          eye_care_goals?: string[] | null
           full_name?: string | null
+          gender?: string | null
           id: string
+          last_exam_date?: string | null
+          updated_at?: string | null
+          vision_aids?: string | null
         }
         Update: {
           created_at?: string
+          date_of_birth?: string | null
+          eye_care_goals?: string[] | null
           full_name?: string | null
+          gender?: string | null
           id?: string
+          last_exam_date?: string | null
+          updated_at?: string | null
+          vision_aids?: string | null
         }
         Relationships: []
       }
