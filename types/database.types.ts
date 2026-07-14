@@ -39,6 +39,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      family_history: {
+        Row: {
+          conditions: string[]
+          created_at: string
+          id: string
+          notes: string | null
+          relation: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          conditions?: string[]
+          created_at?: string
+          id?: string
+          notes?: string | null
+          relation: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          conditions?: string[]
+          created_at?: string
+          id?: string
+          notes?: string | null
+          relation?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
