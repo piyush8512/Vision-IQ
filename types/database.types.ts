@@ -124,6 +124,63 @@ export type Database = {
           },
         ]
       }
+      exam_records: {
+        Row: {
+          appointment_id: string
+          clinical_findings: Json
+          created_at: string
+          diagnosis: string | null
+          doctor_id: string
+          follow_up: string | null
+          id: string
+          prescription_changes: Json
+          recommendations: Json
+          updated_at: string
+          vision_measurements: Json
+        }
+        Insert: {
+          appointment_id: string
+          clinical_findings?: Json
+          created_at?: string
+          diagnosis?: string | null
+          doctor_id: string
+          follow_up?: string | null
+          id?: string
+          prescription_changes?: Json
+          recommendations?: Json
+          updated_at?: string
+          vision_measurements?: Json
+        }
+        Update: {
+          appointment_id?: string
+          clinical_findings?: Json
+          created_at?: string
+          diagnosis?: string | null
+          doctor_id?: string
+          follow_up?: string | null
+          id?: string
+          prescription_changes?: Json
+          recommendations?: Json
+          updated_at?: string
+          vision_measurements?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_records_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: true
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_records_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       family_history: {
         Row: {
           conditions: string[]

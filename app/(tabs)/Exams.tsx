@@ -1,6 +1,8 @@
+import { Appointment, getAppointment } from "@/api/appointment";
+import { ExamRecord, getExamRecordByAppointment } from "@/api/examRecordDoctor";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -12,11 +14,58 @@ import {
 
 type TabType = "user" | "doctor";
 
+type VisionMeasurements = {
+  right_eye: {
+    sphere: string;
+    cylinder: string;
+    axis: number;
+    visual_acuity: string;
+    iop: string;
+  };
+  left_eye: {
+    sphere: string;
+    cylinder: string;
+    axis: number;
+    visual_acuity: string;
+    iop: string;
+  };
+};
+
+type UserNote = {
+  id: string;
+  type: "Symptom" | "Question" | "Note" | "Reminder" | "Concern";
+  content: string;
+  created_at: string;
+  updated_at: string;
+};
+
+type ExamRecordView = ExamRecord & {
+  clinical_findings: string[];
+  recommendations: string[];
+  prescription_changes: string[];
+  vision_measurements: VisionMeasurements;
+};
+
 const Exams: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>("user");
+  const [examRecord, setExamRecord] = useState<ExamRecord | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [appointment, setAppointment] = useState<Appointment | null>(null);
+  const [loadingappointment, setLoadingappointment] = useState(true);
+  const userNotes = appointment?.user_notes as UserNote[] | undefined;
+
+  const record = examRecord as ExamRecordView | null;
+  const vision = record?.vision_measurements;
+
+  // const { appointmentId } = useLocalSearchParams();
+
+  const appointmentId = "4988d069-b394-4359-bf6a-74d4d34aeb8f"; // for testing
 
   const handleSchedule = () => {
-    Alert.alert("Follow-up Scheduled", "Your follow-up appointment is requested.");
+    Alert.alert(
+      "Follow-up Scheduled",
+      "Your follow-up appointment is requested.",
+    );
   };
 
   const handleCalendar = () => {
@@ -31,15 +80,50 @@ const Exams: React.FC = () => {
     Alert.alert("Download", "Downloading report...");
   };
 
+  const loadExamRecord = async () => {
+    try {
+      setLoading(true);
+      const data = await getExamRecordByAppointment(appointmentId);
+      setExamRecord(data);
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Unable to load exam record.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const appointmentDetails = async () => {
+    try {
+      setLoadingappointment(true);
+      const data = await getAppointment(appointmentId);
+      setAppointment(data);
+      setLoadingappointment(false);
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Unable to load appointment details.");
+      setLoadingappointment(false);
+    }
+  };
+
+  useEffect(() => {
+    loadExamRecord();
+    appointmentDetails();
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
-        <Ionicons name="arrow-back" size={22} onPress={()=> router.push("/(tabs)/Home")}/>
+        <Ionicons
+          name="arrow-back"
+          size={22}
+          onPress={() => router.push("/(tabs)/Home")}
+        />
 
         <View>
           <Text style={styles.headerTitle}>Eye Exam Record</Text>
-          <Text style={styles.headerDate}>December 15, 2025</Text>
+          <Text style={styles.headerDate}>{appointment?.appointment_date}</Text>
         </View>
 
         <View style={styles.headerIcons}>
@@ -56,10 +140,7 @@ const Exams: React.FC = () => {
       {/* TAB SWITCH */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
-          style={[
-            styles.tabButton,
-            activeTab === "user" && styles.activeTab,
-          ]}
+          style={[styles.tabButton, activeTab === "user" && styles.activeTab]}
           onPress={() => setActiveTab("user")}
         >
           <Text
@@ -73,10 +154,7 @@ const Exams: React.FC = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[
-            styles.tabButton,
-            activeTab === "doctor" && styles.activeTab,
-          ]}
+          style={[styles.tabButton, activeTab === "doctor" && styles.activeTab]}
           onPress={() => setActiveTab("doctor")}
         >
           <Text
@@ -92,14 +170,14 @@ const Exams: React.FC = () => {
 
       {/* ORANGE CARD */}
       <View style={styles.examCard}>
-        <Text style={styles.examTitle}>
-          Annual Comprehensive Eye Exam
+        <Text style={styles.examTitle}>Annual Comprehensive Eye Exam</Text>
+
+        <Text style={styles.examDoctor}>
+          with {appointment?.provider_name || "Dr. John Doe"}
         </Text>
 
-        <Text style={styles.examDoctor}>with Dr. Sarah Johnson</Text>
-
         <Text style={styles.locationLabel}>Location</Text>
-        <Text style={styles.location}>Vision Care Center</Text>
+        <Text style={styles.location}>{appointment?.place}</Text>
       </View>
 
       {/* USER NOTES */}
@@ -108,41 +186,37 @@ const Exams: React.FC = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Symptoms You Reported</Text>
 
-            <Text style={styles.bullet}>
-              • Occasional dry eyes after extended screen time
-            </Text>
-
-            <Text style={styles.bullet}>
-              • Mild blurriness when reading small text
-            </Text>
-
-            <Text style={styles.bullet}>
-              • Light sensitivity in bright sunlight
-            </Text>
+            {userNotes
+              ?.filter((item) => item.type === "Symptom")
+              .map((item) => (
+                <Text key={item.id} style={styles.bullet}>
+                  • {item.content}
+                </Text>
+              ))}
           </View>
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Your Concerns</Text>
 
-            <Text style={styles.bullet}>
-              • Worried about increased screen time affecting vision
-            </Text>
-
-            <Text style={styles.bullet}>
-              • Family history of glaucoma
-            </Text>
+            {userNotes
+              ?.filter((item) => item.type === "Concern")
+              .map((item) => (
+                <Text key={item.id} style={styles.bullet}>
+                  • {item.content}
+                </Text>
+              ))}
           </View>
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Questions You Asked</Text>
 
-            <Text style={styles.bullet}>
-              • Should I use blue light glasses?
-            </Text>
-
-            <Text style={styles.bullet}>
-              • How often should I take screen breaks?
-            </Text>
+            {userNotes
+              ?.filter((item) => item.type === "Question")
+              .map((item) => (
+                <Text key={item.id} style={styles.bullet}>
+                  • {item.content}
+                </Text>
+              ))}
           </View>
         </View>
       )}
@@ -153,41 +227,81 @@ const Exams: React.FC = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Diagnosis</Text>
             <Text style={styles.highlight}>
-              Healthy eyes with mild computer vision syndrome
+              {examRecord?.diagnosis ?? "No diagnosis available"}
+            </Text>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Vision Measurements</Text>
+
+            <Text style={styles.bullet}>
+              Right Eye Sphere: {vision?.right_eye.sphere}
+            </Text>
+
+            <Text style={styles.bullet}>
+              Right Eye Cylinder: {vision?.right_eye.cylinder}
+            </Text>
+
+            <Text style={styles.bullet}>
+              Right Eye Axis: {vision?.right_eye.axis}
+            </Text>
+
+            <Text style={styles.bullet}>
+              Right Eye Visual Acuity: {vision?.right_eye.visual_acuity}
+            </Text>
+
+            <Text style={styles.bullet}>
+              Right Eye IOP: {vision?.right_eye.iop}
+            </Text>
+
+            <Text style={styles.bullet}>
+              Left Eye Sphere: {vision?.left_eye.sphere}
+            </Text>
+
+            <Text style={styles.bullet}>
+              Left Eye Cylinder: {vision?.left_eye.cylinder}
+            </Text>
+
+            <Text style={styles.bullet}>
+              Left Eye Axis: {vision?.left_eye.axis}
+            </Text>
+
+            <Text style={styles.bullet}>
+              Left Eye Visual Acuity: {vision?.left_eye.visual_acuity}
+            </Text>
+
+            <Text style={styles.bullet}>
+              Left Eye IOP: {vision?.left_eye.iop}
             </Text>
           </View>
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Clinical Findings</Text>
 
-            <Text style={styles.bullet}>
-              • No signs of glaucoma or retinal issues
-            </Text>
-
-            <Text style={styles.bullet}>
-              • Optic nerve appears healthy
-            </Text>
-
-            <Text style={styles.bullet}>
-              • Mild dry eye symptoms consistent with digital eye strain
-            </Text>
+            {record?.clinical_findings?.map((finding, index) => (
+              <Text key={index} style={styles.bullet}>
+                • {finding}
+              </Text>
+            ))}
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              Doctor's Recommendations
-            </Text>
+            <Text style={styles.sectionTitle}>Doctor's Recommendations</Text>
 
-            <Text style={styles.bullet}>• Follow the 20-20-20 rule</Text>
-            <Text style={styles.bullet}>
-              • Use artificial tears as needed
-            </Text>
-            <Text style={styles.bullet}>
-              • Updated prescription provided
-            </Text>
-            <Text style={styles.bullet}>
-              • Schedule follow-up in 12 months
-            </Text>
+            {record?.recommendations?.map((recommendation, index) => (
+              <Text key={index} style={styles.bullet}>
+                • {recommendation}
+              </Text>
+            ))}
+          </View>
+          {/*prescription section*/}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Prescription Changes</Text>
+            {record?.prescription_changes?.map((item, index) => (
+              <Text key={index} style={styles.bullet}>
+                • {item}
+              </Text>
+            ))}
           </View>
         </View>
       )}
